@@ -132,3 +132,201 @@ SELECT ename || '의 월급은 ' || sal || '입니다.' as 월급정보
   FROM emp;
 SELECT ename ||  '의 직업은  ' || job || '입니다' as 직업정보
   FROM emp;
+
+/*
+    ================================================================================
+    005. 중복된 데이터를 제거해서 출력하기(DISTINCT)
+    학습 내용: 중복된 데이터를 제거해서 출력하는 방법에 대해 배운다.
+    ================================================================================
+*/
+
+/*
+    컬럼의 데이터를 출력할 때
+    중복된 데이터를 제거하고 출력하려면 DISTINCT 키워드를 이용하면 된다.
+    컬럼명 앞에 DISTINCT를 작성하고 실행하면 중복행은 제거되고
+    UNIQUE한 값만 출력된다.
+    오라클의 경우 DISTINCT 대신 UNIQUE를 사용해도 된다.
+*/
+SELECT DISTINCT job
+  FROM emp;
+SELECT UNIQUE job
+  FROM emp;
+
+/*
+    ================================================================================
+    006. 데이터를 정렬해서 출력하기
+    학습 내용: 데이터를 정렬해서 출력하는 방법을 배운다.
+    ================================================================================
+*/
+
+/*
+    데이터를 정렬해서 출력하려면 ORDER BY절을 사용하면 된다.
+    ORDER BY절 다음에 정렬하고자 하는 데이터의 컬럼명을 기술한다.
+    그리고 내림차순으로 정렬할지 오름차순으로 정렬할지 정렬 방식에 대한 옵션을
+    컬럼명 다음에 작성한다.
+
+    (정렬 방식) -> (정렬 옵션) -> (축약)
+    오름차순 -> ASCENDING -> ASC
+    내림차순 -> DESCENDING -> DESC    
+
+    ORDER BY 절은 SQL 작성 시에도 맨 마지막에 작성하고,
+    실제로 SQL이 실행될 때도 맨 마지막에 실행된다.
+*/
+
+/*
+    순서
+    1. EMP 테이블에서 이름과 월급을 선택한다.
+    2. 월급을 낮은 값부터 높은 값 순으로 정렬한다.
+*/
+SELECT ename, sal
+FROM emp
+ORDER BY sal asc;
+
+/*
+    ORDER BY 절은 맨 마지막에 실행되기 때문에,
+    SELECT절에 사용한 컬럼 별칭을 ORDER BY 절에서 사용할 수 있다.
+
+*/
+SELECT ename, sal as 월급
+FROM emp
+ORDER BY 월급 ASC;
+
+/*
+    부서 번호를 먼저 오름차순으로 정렬하고,
+    정렬된 것을 기준으로 월급을 내림차순으로 정렬함.
+*/
+SELECT ename, deptno, sal
+FROM emp
+ORDER BY deptno ASC, sal DESC;
+
+/*
+    ================================================================================
+    007. WHERE절 배우기1 (숫자 데이터 검색)
+    학습 내용: 검색을 원하는 숫자 데이터를 찾아 출력하는 방법을 배운다.
+    ================================================================================
+*/
+
+/*
+    검색하기 원하는 조건을 WHERE절에 작성해서 데이터를 검색한다.
+    WHERE절은 FROM절 다음에 작성한다.
+    
+    WHERE절의 검색 조건으로 사용하는 비교 연산자는 다음과 같다.
+    - 비교 연산자
+        A > B (크다), A < B (작다)
+        A >= B (크거나 같다), A <= B (작거나 같다)
+        A = B (같다)
+        A != B (같지 않다)
+        A ^= B (같지 않다)
+        A <> B (같지 않다)
+    - 기타 비교 연산자
+        BETWEEN A AND B (A이상 B이하)
+        LIKE (일치하는 문자 패턴 검색) 
+        A IS NULL (A가 NULL 값이다)
+        IN (A, B, C, ...) <- 값 리스트 중 일치하는 값들이 대상이다
+*/
+SELECT ename, sal, job
+FROM emp
+WHERE sal = 3000;
+
+SELECT ename, sal, job
+FROM emp
+WHERE sal >= 3000;
+
+SELECT ename, sal, job
+FROM emp
+WHERE sal = 3000;
+
+SELECT ename, sal, job
+FROM emp
+WHERE sal < 3000;
+
+SELECT ename, sal, job
+FROM emp
+WHERE sal <= 3000;
+
+// 같지 않다
+SELECT ename, sal, job
+FROM emp
+WHERE sal != 3000;
+
+SELECT ename, sal, job
+FROM emp
+WHERE sal ^= 3000;
+
+SELECT ename, sal, job
+FROM emp
+WHERE sal <> 3000;
+
+// 기타 비교 연산자
+SELECT ename, sal, job
+FROM emp
+WHERE sal BETWEEN 1000 AND 3000;
+
+SELECT ename, sal, job
+FROM emp
+WHERE enam LIKE 'KING';
+
+SELECT ename, sal, job
+FROM emp
+WHERE sal IS NULL;
+
+SELECT ename, sal, job
+FROM emp
+WHERE sal IN (1000, 2000, 3000);
+
+/*
+    ================================================================================
+    008. WHERE절 배우기2 (문자와 날짜 검색)
+    학습 내용: 검색을 원하는 문자 데이터를 검색하는 방법을 배운다.
+    ================================================================================
+*/
+
+/*
+    문자를 검색할 때는 양쪽에 싱글 쿼테이션 마크(')로 감싸줘야 한다.
+*/
+SELECT ename, sal, job, hiredate, deptno
+FROM emp
+WHERE ename = 'SCOTT';
+
+/*
+    날짜 검색도 양쪽에 싱글 쿼테이션 마크로 감싸줘야 한다.
+*/
+SELECT ename, sal
+FROM emp
+WHERE hiredate = '81/11/17'
+
+-- 현재 접속한 세션의 날짜 형식
+SELECT *
+FROM NLS_SESSION_PARAMETERS
+WHERE PARAMETER = 'NLS_DATE_FORMAT'
+
+/*
+    ---------------------------
+        형식   |     정의
+    ---------------------------
+    YYYY       / 연도 4자리
+    YY 또는 RR  / 연도 2자리 (RR은 2000년도 이전, YY는 2000년도 이후)
+
+    MM         / 달의 2자리값
+    MON        / 달의 영문 약어
+    
+    DD         / 숫자 형식의 일
+    DAY        / 요일
+    DY         / 요일 약어
+    D          / 요일의 숫자
+
+    HH24        / 시간(0~24)
+    MI          / 분(0~59)
+    SS          / 초(0~59)
+
+    WW          / 연의 주
+    IW          / ISO 표준에 따른 년의 주
+    W           / 월의 주
+
+    YEAR        / 영어 철자로 표기된 년도
+    MONTH       / 영어 철자로 된 달
+*/
+
+-- 날짜 포맷 변경 
+ALTER SESSION SET NLS_DATE_FORMAT = 'RR/MM/DD';
+ALTER SESSION SET NLS_DATE_FORMAT = 'YY/MM/DD';
